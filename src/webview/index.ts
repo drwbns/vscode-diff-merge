@@ -25,25 +25,11 @@ export function someFunctionThatLogsError(error: unknown) {
   }
 }
 
-// Example usage of the log function with error handling
-try {
-  // Some code that might throw an error
-  throw new Error('This is a test error');
-} catch (error) {
-  someFunctionThatLogsError(error);
-}
-
-// Additional code in src/webview/index.ts
-// ...
-
-export function anotherFunction() {
-  // Function implementation
-}
-
 const column = ViewColumn.One;
 
 export async function showDiff({ leftContent, rightContent, leftPath, rightPath, context }: IDiffData) {
   try {
+    log(`showDiff called with leftPath=${leftPath}, rightPath=${rightPath}`);
     const options = {
       enableScripts: true,
       retainContextWhenHidden: true,
@@ -87,6 +73,7 @@ export async function showDiff({ leftContent, rightContent, leftPath, rightPath,
         const savedRightPath = await getSaveRightPath(env.rightPath);
         if (savedRightPath) {
           writeFileSync(getSafeFsPath(savedRightPath), rightContent, utf8Stream);
+          log(`File saved to ${savedRightPath}`);
           return savedRightPath;
         }
         return '';
@@ -100,7 +87,6 @@ export async function showDiff({ leftContent, rightContent, leftPath, rightPath,
     panel.onDidChangeViewState(e => {
       setPanelFocused(e.webviewPanel.active);
       log(`panel visibility changed to: ${e.webviewPanel.active}`);
-      // don't need to worry when it's not active becuase the diff navigator's buttons will be invisible
       if (e.webviewPanel.active) {
         setActiveDiffPanelWebview(extendsWebView);
       }
@@ -109,13 +95,12 @@ export async function showDiff({ leftContent, rightContent, leftPath, rightPath,
       log('panel disposed');
       setPanelFocused(false);
     });
-    // ugly, I know. The case is when opening new diff view, with the timeout, the new panel will wait fot the previous panel to set focus out
     setTimeout(() => {
       setPanelFocused(true);
       setActiveDiffPanelWebview(extendsWebView);
     }, 100);
   } catch (error) {
-    log(error);
+    log(`Error in showDiff: ${error}`);
   }
 }
 

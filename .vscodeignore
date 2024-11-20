@@ -1,7 +1,5 @@
 .vscode/**
 .vscode-test/**
-out/test/**
-src/**
 .gitignore
 azure-pipelines.yml
 vsc-extension-quickstart.md
@@ -9,7 +7,7 @@ vsc-extension-quickstart.md
 **/tslint.json
 **/*.map
 **/*.ts
-resources/**/node_modules
+**/.history/**
 azure-pipelines.yml
 .github
 .env

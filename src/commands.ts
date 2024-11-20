@@ -5,6 +5,7 @@ import { getActiveDiffPanelWebview } from './webview/store';
 import { commands, window, Uri, ExtensionContext, env, TextEditor } from 'vscode';
 import { log } from './logger';
 import { takeWhile, takeRightWhile } from 'lodash';
+import { setDiffMergeFileSelected } from './context';
 
 export function init(context: ExtensionContext) {
   context.subscriptions.push(
@@ -56,6 +57,7 @@ export function init(context: ExtensionContext) {
   }
 
   async function compareFileWithClipboard() {
+    log('compareFileWithClipboard function called');
     const { document } = window.activeTextEditor || {};
     if (!document) {
       window.showInformationMessage(
@@ -64,13 +66,22 @@ export function init(context: ExtensionContext) {
       log('This command has to be run only when a file is open');
       return;
     }
-    showDiff({
-      context,
-      leftContent: await env.clipboard.readText(),
-      leftPath: 'Clipboard',
-      rightPath: document.uri.fsPath,
-      rightContent: document.getText(),
-    });
+    const leftContent = await env.clipboard.readText();
+    const rightContent = document.getText();
+    const rightPath = document.uri.fsPath;
+    log(`compareFileWithClipboard: leftContent=${leftContent}, rightContent=${rightContent}, rightPath=${rightPath}`);
+    try {
+      log('Calling showDiff from compareFileWithClipboard');
+      showDiff({
+        context,
+        leftContent,
+        leftPath: 'Clipboard',
+        rightPath,
+        rightContent,
+      });
+    } catch (error) {
+      log(`Error in compareFileWithClipboard: ${error}`);
+    }
   }
 
   function blank() {
@@ -134,9 +145,9 @@ export function init(context: ExtensionContext) {
     try {
       selectedFilePath = tryToGetPath(e);
       log(`file selected: ${selectedFilePath || 'no file selected'}`);
-      commands.executeCommand('setContext', 'diffMergeFileSelected', true);
+      setDiffMergeFileSelected(true);
     } catch (error) {
-      log(error as object)
+      log(error as object);
     }
   }
 
@@ -168,6 +179,7 @@ export function init(context: ExtensionContext) {
         rightPath,
         rightContent: getContentOrFallback(rightPath),
       });
+      setDiffMergeFileSelected(false); // Reset the context after comparison
     } catch (error) {
       log(`There is a problem to compare with selected: ${error}`);
     }

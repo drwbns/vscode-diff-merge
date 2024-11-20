@@ -7,3 +7,7 @@ export function setPanelFocused(focused: boolean) {
 export function setHasChanges(hasChanges: boolean) {
   commands.executeCommand('setContext', 'diffMerge.hasChanges', hasChanges);
 }
+
+export function setDiffMergeFileSelected(selected: boolean) {
+  commands.executeCommand('setContext', 'diffMergeFileSelected', selected);
+}
