@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/moshfeu/vscode-diff-merge"
+    "url": "https://github.com/drwbns/vscode-diff-merge"
   },
   "keywords": [
     "compare",
