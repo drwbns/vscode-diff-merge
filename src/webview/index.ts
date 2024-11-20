@@ -17,6 +17,29 @@ interface IDiffData {
   context: ExtensionContext;
 }
 
+export function someFunctionThatLogsError(error: unknown) {
+  if (error instanceof Error) {
+    log(error.message);
+  } else {
+    log(String(error));
+  }
+}
+
+// Example usage of the log function with error handling
+try {
+  // Some code that might throw an error
+  throw new Error('This is a test error');
+} catch (error) {
+  someFunctionThatLogsError(error);
+}
+
+// Additional code in src/webview/index.ts
+// ...
+
+export function anotherFunction() {
+  // Function implementation
+}
+
 const column = ViewColumn.One;
 
 export async function showDiff({ leftContent, rightContent, leftPath, rightPath, context }: IDiffData) {

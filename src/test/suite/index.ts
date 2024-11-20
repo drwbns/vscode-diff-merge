@@ -1,37 +1,35 @@
 import * as path from 'path';
 import Mocha from 'mocha';
+import { promisify } from 'util';
 import glob from 'glob';
 
-export function run(): Promise<void> {
-	// Create the mocha test
-	const mocha = new Mocha({
-		ui: 'tdd',
-	});
-	mocha.options.color = true;
+const globPromise = promisify(glob.glob);
 
-	const testsRoot = path.resolve(__dirname, '..');
+export async function run(): Promise<void> {
+  // Create the mocha test
+  const mocha = new Mocha({
+    ui: 'tdd',
+  });
+  mocha.options.color = true;
 
-	return new Promise((c, e) => {
-		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
-			if (err) {
-				return e(err);
-			}
+  const testsRoot = path.resolve(__dirname, '..');
 
-			// Add files to the test suite
-			files.forEach(f => mocha.addFile(path.resolve(testsRoot, f)));
+  try {
+    // Get the list of test files using glob with promises
+    const files: string[] = await globPromise('**/**.test.js', { cwd: testsRoot, nodir: true }) as string[];
 
-			try {
-				// Run the mocha test
-				mocha.run(failures => {
-					if (failures > 0) {
-						e(new Error(`${failures} tests failed.`));
-					} else {
-						c();
-					}
-				});
-			} catch (err) {
-				e(err);
-			}
-		});
-	});
+    // Add files to the test suite
+    files.forEach((f: string) => mocha.addFile(path.resolve(testsRoot, f)));
+
+    // Run the mocha test
+    const failures = await new Promise<number>((resolve, reject) => {
+      mocha.run(resolve).on('error', reject);
+    });
+
+    if (failures > 0) {
+      throw new Error(`${failures} tests failed.`);
+    }
+  } catch (err) {
+    throw err;
+  }
 }

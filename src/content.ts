@@ -28,9 +28,7 @@ export function getGitSides(path: string) {
         .split(/\n/g)
         .includes(path);
 
-      const cmdGitDiff = `git diff -U100000 ${
-        isStaged ? '--cached' : ''
-      } -- ${path}`;
+      const cmdGitDiff = `git diff -U100000 ${isStaged ? '--cached' : ''} -- ${path}`;
       log(cmdGitDiff);
       patch = execSync(cmdGitDiff, cwdCommandOptions);
     } else if (isSvn()) {
@@ -50,7 +48,7 @@ export function getGitSides(path: string) {
       rightContent = getContentOrFallback(`${rootPath}/${path}`);
     }
   } catch (error) {
-    log(error);
+    log(String(error));
     rightContent = getContentOrFallback(`${rootPath}/${path}`);
   }
 
@@ -58,9 +56,9 @@ export function getGitSides(path: string) {
 }
 
 export function getContentOrFallback(path: string) {
-  const content = readFileSync(path);
-  if (!istextorbinary.isTextSync(undefined, content)) {
+  const content = readFileSync(path, 'utf8');
+  if (!istextorbinary.isText(content)) {
     return '';
   }
-  return content.toString(utf8Stream.encoding);
+  return content;
 }
