@@ -1,53 +1,27 @@
-const pathDescription: RegExp = /((.|\n|\r)*)@@\n/g;
-const eof = /\n$/;
+const pathDescription: RegExp = /@@ -(\d+),(\d+) \+(\d+),(\d+) @@((.|\n)*?)(?=@@ -(\d+),(\d+) \+(\d+),(\d+) @@|$)/g;
 
-type Line = {
-  added: boolean;
-  removed: boolean;
-  eof: boolean;
-  code: string;
-};
+export function patchToCodes(patch: string): { leftContent: string, rightContent: string } {
+    let leftContent = '';
+    let rightContent = '';
 
-type LineType = keyof Pick<Line, 'added' | 'removed'>;
-type Side = 'left' | 'right';
+    const matches = patch.matchAll(pathDescription);
 
-const eofR = /\\ No newline at end of file/;
+    for (const match of matches) {
+        const content = match[5];
 
-export function patchToCodes(patch: string) {
-  const onlyCode = patch.replace(pathDescription, '').replace(eof, '');
-  const patchHasEof = !patch.match(eofR);
+        const lines = content.split('\n').filter(line => line.trim() !== '');
 
-  const lines = onlyCode.split('\n').map((line) => ({
-    added: line.startsWith('+'),
-    removed: line.startsWith('-'),
-    code: line.substr(1, line.length),
-    eof: !!line.match(eofR),
-  }));
-
-  const extractSide = (side: Side) => {
-    const lineTypeToRemove: LineType = side === 'left' ? 'added' : 'removed';
-    const sideHasEof = !!lines[lines.findIndex((l) => l.eof) - 1]?.[
-      lineTypeToRemove
-    ];
-
-    const sideLines = lines.reduce<string[]>((acc, curr, idx) => {
-      if (curr[lineTypeToRemove] || curr.eof) {
-        return acc;
-      }
-      return [...acc, curr.code];
-    }, []);
-    if (patchHasEof || sideHasEof) {
-      sideLines.push('');
+        for (const line of lines) {
+            if (line.startsWith('-')) {
+                leftContent += line.slice(1) + '\n';
+            } else if (line.startsWith('+')) {
+                rightContent += line.slice(1) + '\n';
+            } else if (line.startsWith(' ')) {
+                leftContent += line.slice(1) + '\n';
+                rightContent += line.slice(1) + '\n';
+            }
+        }
     }
 
-    return sideLines.join('\n');
-  };
-
-  const leftContent = extractSide('left');
-  const rightContent = extractSide('right');
-
-  return {
-    leftContent,
-    rightContent,
-  };
+    return { leftContent: leftContent.trim(), rightContent: rightContent.trim() };
 }

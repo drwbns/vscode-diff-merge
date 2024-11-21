@@ -41,13 +41,14 @@
     "webview:watch": "cd resources/monaco && yarn build:dev",
     "watch": "tsc -watch -p ./",
     "pretest": "yarn run compile",
-    "test:unit": "ts-mocha src/**/*.spec.ts",
+    "test:unit": "jest",
     "test": "node ./out/test/runTest.js",
     "package": "bash scripts/package.sh",
     "deploy:openvsx": "sh scripts/deploy-openvsx.sh",
     "deploy": "vsce publish --yarn"
   },
   "devDependencies": {
+    "@types/chai": "^5.0.1",
     "@types/glob": "^7.1.1",
     "@types/istextorbinary": "^2.3.0",
     "@types/lodash": "^4.14.140",
@@ -55,20 +56,25 @@
     "@types/node": "18.11.18",
     "@types/vscode": "^1.38.0",
     "@vscode/test-electron": "^1.6.1",
+    "@vscode/vsce": "^3.2.1",
+    "chai": "^5.1.2",
     "glob": "^11.0.0",
+    "jest": "^29.7.0",
     "lodash": "^4.17.21",
     "mocha": "^10.8.2",
-    "ts-mocha": "^10.0.0",
+    "ts-jest": "^29.2.5",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
     "tslint": "^5.12.1",
-    "typescript": "^4.8.4",
+    "typescript": "^4.9.5",
     "vsce": "^1.97.0",
     "vscode-test": "^1.6.1"
   },
   "dependencies": {
     "@vscode/vsce": "^3.2.1",
     "grep": "^0.1.0",
-    "lodash": "^4.17.21",
-    "istextorbinary": "^9.5.0"
+    "istextorbinary": "^9.5.0",
+    "lodash": "^4.17.21"
   },
   "contributes": {
     "menus": {
@@ -231,11 +237,7 @@
       },
       {
         "title": "[Diff & Merge] Open current diff-view with Diff & Merge",
-        "command": "diffMerge.openWithDiffMerge",
-        "icon": {
-          "dark": "resources/icons/dark/diff-merge-icon.svg",
-          "light": "resources/icons/light/diff-merge-icon.svg"
-        }
+        "command": "diffMerge.openWithDiffMerge"
       }
     ]
   }
