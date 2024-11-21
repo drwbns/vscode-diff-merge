@@ -1,7 +1,7 @@
 import { patchToCodes } from '../../patch';
 
-describe('patchToCodes', () => {
-  it('should correctly parse a simple diff', () => {
+test('patchToCodes', () => {
+  test('should correctly parse a simple diff', () => {
     const diff = `@@ -1,4 +1,4 @@
 -Hello World
 +Hi World
@@ -13,7 +13,7 @@ describe('patchToCodes', () => {
     expect(result.rightContent).toBe(`Hi World`);
   });
 
-  it('should correctly parse a more complex diff', () => {
+  test('should correctly parse a more complex diff', () => {
     const diff = `@@ -1,5 +1,6 @@
 -Hello
 -World
