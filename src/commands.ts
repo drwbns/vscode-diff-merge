@@ -88,10 +88,10 @@ export function init(context: ExtensionContext) {
     showDiff({ leftContent: '', rightContent: '', rightPath: '', context });
   }
 
-  function gitDiff(e: { resourceUri: Uri }) {
+  async function gitDiff(e: { resourceUri: Uri }) {
     try {
       const rightPath = getFilePath(e.resourceUri.fsPath);
-      const { leftContent, rightContent } = getGitSides(rightPath);
+      const { leftContent, rightContent } = await getGitSides(rightPath);
       if (rightContent || leftContent) {
         showDiff({ leftContent, rightContent, rightPath, context });
       } else {
@@ -117,7 +117,7 @@ export function init(context: ExtensionContext) {
     if (leftPath && currentPath) {
       const rightPath = currentPath ? Uri.parse(currentPath).path : '';
 
-      const { leftContent, rightContent } = getExplorerSides(
+      const { leftContent, rightContent } = await getExplorerSides(
         leftPath,
         rightPath
       );
@@ -172,12 +172,14 @@ export function init(context: ExtensionContext) {
         }
         return;
       }
+      const leftContent = await getContentOrFallback(selectedFilePath);
+      const rightContent = await getContentOrFallback(rightPath);
       showDiff({
         context,
-        leftContent: getContentOrFallback(selectedFilePath),
+        leftContent,
         leftPath: selectedFilePath,
         rightPath,
-        rightContent: getContentOrFallback(rightPath),
+        rightContent,
       });
       setDiffMergeFileSelected(false); // Reset the context after comparison
     } catch (error) {

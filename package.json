@@ -56,7 +56,6 @@
     "@types/vscode": "^1.38.0",
     "@vscode/test-electron": "^1.6.1",
     "glob": "^11.0.0",
-    "istextorbinary": "^9.5.0",
     "lodash": "^4.17.21",
     "mocha": "^10.8.2",
     "ts-mocha": "^10.0.0",
@@ -67,8 +66,9 @@
   },
   "dependencies": {
     "@vscode/vsce": "^3.2.1",
+    "grep": "^0.1.0",
     "lodash": "^4.17.21",
-    "xml2js": "^0.5.0"
+    "istextorbinary": "^9.5.0"
   },
   "contributes": {
     "menus": {

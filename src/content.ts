@@ -24,17 +24,17 @@ export function getGitSides(path: string) {
     if (isGit()) {
       const cmdIsStaged = 'git diff --cached --name-only';
       log(cmdIsStaged);
-      const isStaged = execSync(cmdIsStaged, cwdCommandOptions)
-        .split(/\n/g)
-        .includes(path);
+      const isStagedOutput = execSync(cmdIsStaged, cwdCommandOptions).toString();
+      log(`isStagedOutput: ${isStagedOutput}`);
+      const isStaged = isStagedOutput.split(/\n/g).includes(path);
 
       const cmdGitDiff = `git diff -U100000 ${isStaged ? '--cached' : ''} -- ${path}`;
       log(cmdGitDiff);
-      patch = execSync(cmdGitDiff, cwdCommandOptions);
+      patch = execSync(cmdGitDiff, cwdCommandOptions).toString();
     } else if (isSvn()) {
       const cmdSvnDiff = `svn diff --internal-diff -x "-U100000" ${path}`;
       log(cmdSvnDiff);
-      patch = execSync(cmdSvnDiff, cwdCommandOptions);
+      patch = execSync(cmdSvnDiff, cwdCommandOptions).toString();
     } else {
       throw new Error(
         `folder is not .git nor .svn. I don't how to hadnle it. Pease file an issue`
@@ -57,7 +57,8 @@ export function getGitSides(path: string) {
 
 export function getContentOrFallback(path: string) {
   const content = readFileSync(path, 'utf8');
-  if (!istextorbinary.isText(content)) {
+  const isText = istextorbinary.isText(undefined, Buffer.from(content));
+  if (!isText) {
     return '';
   }
   return content;
