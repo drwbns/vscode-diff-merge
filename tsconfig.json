@@ -14,7 +14,8 @@
     "baseUrl": "./",  /* Add baseUrl to resolve module paths */
     "paths": {
       "@src/*": ["src/*"]
-    }
+    },
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",
