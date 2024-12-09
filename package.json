@@ -1,4 +1,5 @@
 {
+  "type": "commonjs",
   "name": "diff-merge-updated",
   "displayName": "Diff & Merge - updated",
   "description": "Show diffs and merge",

@@ -1,23 +1,23 @@
 {
-	"compilerOptions": {
-		"module": "ESNext",
-		"target": "ESNext",
-		"outDir": "out",
-		"lib": [
-			"esnext"
-		],
-		"sourceMap": true,
-		"rootDir": "src",
-		"strict": true,   /* enable all strict type-checking options */
-		"esModuleInterop": true,
-		"moduleResolution": "Node",
-		"baseUrl": "./",  /* Add baseUrl to resolve module paths */
-		"paths": {
-			"@src/*": ["src/*"]
-		}
-	},
-	"exclude": [
-		"node_modules",
-		".vscode-test"
-	]
+  "compilerOptions": {
+    "module": "CommonJS",
+    "target": "ESNext",
+    "outDir": "out",
+    "lib": [
+      "esnext"
+    ],
+    "sourceMap": true,
+    "rootDir": "src",
+    "strict": true,   /* enable all strict type-checking options */
+    "esModuleInterop": true,
+    "moduleResolution": "Node",
+    "baseUrl": "./",  /* Add baseUrl to resolve module paths */
+    "paths": {
+      "@src/*": ["src/*"]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    ".vscode-test"
+  ]
 }
